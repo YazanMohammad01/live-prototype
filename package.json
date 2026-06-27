@@ -1,0 +1,15 @@
+{
+  "name": "live-prototype",
+  "private": true,
+  "description": "FICO Score Simulation Prototypes — Safe Driving Score & Credit Score",
+  "scripts": {
+    "dev": "concurrently -n driving,credit -c blue,yellow \"npm run dev:driving\" \"npm run dev:credit\"",
+    "dev:driving": "npm --prefix driving-score run dev",
+    "dev:credit": "npm --prefix credit-score run dev -- --port 5174",
+    "build": "npm --prefix driving-score run build && npm --prefix credit-score run build",
+    "lint": "npm --prefix driving-score run lint && npm --prefix credit-score run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
