@@ -148,21 +148,24 @@ export default function InputPanel({ inputs, onChange }: InputPanelProps) {
         {renderSlider('defaultsOrCollections')}
       </TierSection>
 
-      <TierSection title="Utilization & Debt" color="#e2be73" weight="30%">
+      <TierSection title="Amounts Owed" color="#e2be73" weight="30%">
         {renderSlider('creditUtilizationPercent')}
         {renderSlider('totalDebt')}
         {renderSlider('openAccounts')}
       </TierSection>
 
-      <TierSection title="History Length" color="#b8923e" weight="15%">
+      <TierSection title="Credit History Length" color="#b8923e" weight="15%">
         {renderSlider('oldestAccountYears')}
         {renderSlider('avgAccountAgeYears')}
       </TierSection>
 
-      <TierSection title="Mix & New Activity" color="#a8a29e" weight="20%">
-        {renderSlider('creditTypes')}
+      <TierSection title="New Credit" color="#a8a29e" weight="10%">
         {renderSlider('hardInquiries12Mo')}
         {renderSlider('newAccounts12Mo')}
+      </TierSection>
+
+      <TierSection title="Credit Mix" color="#78716c" weight="10%">
+        {renderSlider('creditTypes')}
       </TierSection>
     </div>
   )

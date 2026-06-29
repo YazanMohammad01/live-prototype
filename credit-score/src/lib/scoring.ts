@@ -21,7 +21,7 @@ export interface CreditInputs {
   newAccounts12Mo: number;        // 0–10
 }
 
-export type RiskCategory = 'Poor' | 'Fair' | 'Good' | 'Very Good' | 'Excellent';
+export type RiskCategory = 'Poor' | 'Fair' | 'Good' | 'Very Good' | 'Exceptional';
 
 export interface TierBreakdown {
   name: string;
@@ -50,9 +50,10 @@ const SCORE_RANGE = MAX_SCORE - MIN_SCORE;
 
 const TIER_WEIGHTS = {
   paymentHistory: 0.35,
-  utilization: 0.30,
+  amountsOwed: 0.30,
   historyLength: 0.15,
-  creditMix: 0.20,
+  newCredit: 0.10,
+  creditMix: 0.10,
 };
 
 function clamp(value: number, min: number, max: number): number {
@@ -70,7 +71,7 @@ function getCategory(score: number): RiskCategory {
   if (score < 670) return 'Fair';
   if (score < 740) return 'Good';
   if (score < 800) return 'Very Good';
-  return 'Excellent';
+  return 'Exceptional';
 }
 
 interface TierResult {
@@ -145,16 +146,14 @@ function scoreHistoryLengthTier(inputs: CreditInputs): TierResult {
   return { score, factors };
 }
 
-function scoreCreditMixTier(inputs: CreditInputs): TierResult {
-  const types = normalize(inputs.creditTypes, 1, 5);
+function scoreNewCreditTier(inputs: CreditInputs): TierResult {
   const inquiries = normalize(inputs.hardInquiries12Mo, 0, 15, true);
   const newAccounts = normalize(inputs.newAccounts12Mo, 0, 10, true);
 
-  const weights = { types: 0.40, inquiries: 0.30, newAccounts: 0.30 };
-  const score = types * weights.types + inquiries * weights.inquiries + newAccounts * weights.newAccounts;
+  const weights = { inquiries: 0.55, newAccounts: 0.45 };
+  const score = inquiries * weights.inquiries + newAccounts * weights.newAccounts;
 
   const factors: ScoreFactor[] = [
-    { input: 'creditTypes', label: 'Credit Type Mix', impact: (1 - types) * weights.types, direction: types >= 0.5 ? 'positive' : 'negative' },
     { input: 'hardInquiries12Mo', label: 'Hard Inquiries (12 mo)', impact: (1 - inquiries) * weights.inquiries, direction: inquiries >= 0.5 ? 'positive' : 'negative' },
     { input: 'newAccounts12Mo', label: 'New Accounts (12 mo)', impact: (1 - newAccounts) * weights.newAccounts, direction: newAccounts >= 0.5 ? 'positive' : 'negative' },
   ];
@@ -162,16 +161,29 @@ function scoreCreditMixTier(inputs: CreditInputs): TierResult {
   return { score, factors };
 }
 
+function scoreCreditMixTier(inputs: CreditInputs): TierResult {
+  const types = normalize(inputs.creditTypes, 1, 5);
+  const score = types;
+
+  const factors: ScoreFactor[] = [
+    { input: 'creditTypes', label: 'Credit Type Variety', impact: (1 - types) * 1.0, direction: types >= 0.5 ? 'positive' : 'negative' },
+  ];
+
+  return { score, factors };
+}
+
 export function calculateCreditScore(inputs: CreditInputs): ScoringResult {
   const payment = scorePaymentHistoryTier(inputs);
-  const utilization = scoreUtilizationTier(inputs);
+  const amountsOwed = scoreUtilizationTier(inputs);
   const history = scoreHistoryLengthTier(inputs);
+  const newCredit = scoreNewCreditTier(inputs);
   const mix = scoreCreditMixTier(inputs);
 
   const weightedScore =
     payment.score * TIER_WEIGHTS.paymentHistory +
-    utilization.score * TIER_WEIGHTS.utilization +
+    amountsOwed.score * TIER_WEIGHTS.amountsOwed +
     history.score * TIER_WEIGHTS.historyLength +
+    newCredit.score * TIER_WEIGHTS.newCredit +
     mix.score * TIER_WEIGHTS.creditMix;
 
   const finalScore = Math.round(MIN_SCORE + weightedScore * SCORE_RANGE);
@@ -179,12 +191,13 @@ export function calculateCreditScore(inputs: CreditInputs): ScoringResult {
 
   const tiers: TierBreakdown[] = [
     { name: 'Payment History', weight: TIER_WEIGHTS.paymentHistory, score: Math.round(payment.score * TIER_WEIGHTS.paymentHistory * SCORE_RANGE), maxScore: TIER_WEIGHTS.paymentHistory * SCORE_RANGE },
-    { name: 'Credit Utilization', weight: TIER_WEIGHTS.utilization, score: Math.round(utilization.score * TIER_WEIGHTS.utilization * SCORE_RANGE), maxScore: TIER_WEIGHTS.utilization * SCORE_RANGE },
-    { name: 'History Length', weight: TIER_WEIGHTS.historyLength, score: Math.round(history.score * TIER_WEIGHTS.historyLength * SCORE_RANGE), maxScore: TIER_WEIGHTS.historyLength * SCORE_RANGE },
-    { name: 'Credit Mix & Activity', weight: TIER_WEIGHTS.creditMix, score: Math.round(mix.score * TIER_WEIGHTS.creditMix * SCORE_RANGE), maxScore: TIER_WEIGHTS.creditMix * SCORE_RANGE },
+    { name: 'Amounts Owed', weight: TIER_WEIGHTS.amountsOwed, score: Math.round(amountsOwed.score * TIER_WEIGHTS.amountsOwed * SCORE_RANGE), maxScore: TIER_WEIGHTS.amountsOwed * SCORE_RANGE },
+    { name: 'Credit History Length', weight: TIER_WEIGHTS.historyLength, score: Math.round(history.score * TIER_WEIGHTS.historyLength * SCORE_RANGE), maxScore: TIER_WEIGHTS.historyLength * SCORE_RANGE },
+    { name: 'New Credit', weight: TIER_WEIGHTS.newCredit, score: Math.round(newCredit.score * TIER_WEIGHTS.newCredit * SCORE_RANGE), maxScore: TIER_WEIGHTS.newCredit * SCORE_RANGE },
+    { name: 'Credit Mix', weight: TIER_WEIGHTS.creditMix, score: Math.round(mix.score * TIER_WEIGHTS.creditMix * SCORE_RANGE), maxScore: TIER_WEIGHTS.creditMix * SCORE_RANGE },
   ];
 
-  const allFactors = [...payment.factors, ...utilization.factors, ...history.factors, ...mix.factors];
+  const allFactors = [...payment.factors, ...amountsOwed.factors, ...history.factors, ...newCredit.factors, ...mix.factors];
   allFactors.sort((a, b) => b.impact - a.impact);
   const topFactors = allFactors.filter(f => f.direction === 'negative').slice(0, 3);
   if (topFactors.length < 3) {

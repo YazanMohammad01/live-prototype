@@ -8,7 +8,7 @@ export interface DemoProfile {
 
 export const DEMO_PROFILES: DemoProfile[] = [
   {
-    name: 'Excellent Credit',
+    name: 'Exceptional Credit',
     description: 'Long history, low utilization, no missed payments',
     inputs: {
       onTimePaymentRate: 99,

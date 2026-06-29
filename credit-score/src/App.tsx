@@ -21,7 +21,7 @@ const DEFAULT_INPUTS: CreditInputs = {
 }
 
 const DEMO_COLORS: Record<string, { accent: string; glow: string; border: string }> = {
-  'Excellent Credit': { accent: '#d4a853', glow: 'rgba(212,168,83,0.12)', border: 'rgba(212,168,83,0.25)' },
+  'Exceptional Credit': { accent: '#d4a853', glow: 'rgba(212,168,83,0.12)', border: 'rgba(212,168,83,0.25)' },
   'Fair Credit':      { accent: '#d97706', glow: 'rgba(217,119,6,0.12)',  border: 'rgba(217,119,6,0.25)' },
   'Poor Credit':      { accent: '#e11d48', glow: 'rgba(225,29,72,0.12)', border: 'rgba(225,29,72,0.25)' },
 }

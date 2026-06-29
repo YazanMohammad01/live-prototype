@@ -22,7 +22,8 @@ const CATEGORY_HEX: Record<RiskCategory, string> = {
 }
 
 export default function ScoreGauge({ score, minScore, maxScore, category }: ScoreGaugeProps) {
-  const percentage = Math.min((score - minScore) / (maxScore - minScore), 1)
+  const rawPct = Math.min((score - minScore) / (maxScore - minScore), 1)
+  const percentage = Math.max(0.005, Math.min(0.995, rawPct))
 
   const cx = 150
   const cy = 140

@@ -61,7 +61,7 @@ src/
 
 The scoring logic is the core of each app. Key design:
 
-- **Weighted tiers**: Each score is composed of multiple tiers with explicit percentage weights (e.g., driving: Behavior 50%, Trip Context 30%, Profile 20%; credit: Payment History 35%, Utilization 30%, History Length 15%, Credit Mix 20%)
+- **Weighted tiers**: Each score is composed of multiple tiers with explicit percentage weights (e.g., driving: Behavior 50%, Trip Context 30%, Profile 20%; credit: Payment History 35%, Amounts Owed 30%, History Length 15%, New Credit 10%, Credit Mix 10% — matching the real FICO five-factor model)
 - **Normalize-and-weight pattern**: All inputs are normalized to 0–1 via `normalize()` (with optional invert for "lower is better" inputs), then multiplied by sub-weights within each tier
 - **Score floors**: Both apps have a minimum score (driving: 150, credit: 300) so the worst possible inputs still produce a realistic baseline, not zero
 - **`INPUT_BOUNDS` export**: Defines min/max/step/unit for every input field—used by both the scoring engine and `InputPanel` sliders
@@ -78,7 +78,7 @@ The scoring logic is the core of each app. Key design:
 - Custom color tokens defined in `index.css` using `@theme {}` blocks (not `tailwind.config`)
 - Driving score uses a navy/blue theme (`navy-*`, `accent` = blue)
 - Credit score uses a charcoal/gold theme (`charcoal-*`, `gold-*`)
-- Score category colors: poor=red, fair=orange, good=green, excellent=emerald (credit adds "Very Good")
+- Score category colors: poor=red, fair=orange, good=green, excellent=emerald (credit uses 5 categories: Poor, Fair, Good, Very Good, Exceptional — matching real FICO terminology)
 - All color references in JSX use CSS custom properties (`var(--color-*)`) or Tailwind token classes—no hardcoded hex values in component code
 
 ## Accessibility

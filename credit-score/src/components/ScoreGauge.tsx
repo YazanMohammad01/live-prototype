@@ -12,7 +12,7 @@ const CATEGORY_COLORS: Record<RiskCategory, string> = {
   Fair: 'var(--color-score-fair)',
   Good: 'var(--color-score-good)',
   'Very Good': 'var(--color-score-very-good)',
-  Excellent: 'var(--color-score-excellent)',
+  Exceptional: 'var(--color-score-exceptional)',
 }
 
 const CATEGORY_HEX: Record<RiskCategory, string> = {
@@ -20,11 +20,12 @@ const CATEGORY_HEX: Record<RiskCategory, string> = {
   Fair: '#d97706',
   Good: '#059669',
   'Very Good': '#2dd4a8',
-  Excellent: '#f5e6c8',
+  Exceptional: '#f5e6c8',
 }
 
 export default function ScoreGauge({ score, minScore, maxScore, category }: ScoreGaugeProps) {
-  const percentage = Math.min((score - minScore) / (maxScore - minScore), 1)
+  const rawPct = Math.min((score - minScore) / (maxScore - minScore), 1)
+  const percentage = Math.max(0.005, Math.min(0.995, rawPct))
 
   const cx = 150
   const cy = 140
