@@ -11,14 +11,16 @@ const CATEGORY_COLORS: Record<RiskCategory, string> = {
   Poor: 'var(--color-score-poor)',
   Fair: 'var(--color-score-fair)',
   Good: 'var(--color-score-good)',
-  Excellent: 'var(--color-score-excellent)',
+  'Very Good': 'var(--color-score-excellent)',
+  Exceptional: 'var(--color-score-excellent)',
 }
 
 const CATEGORY_HEX: Record<RiskCategory, string> = {
   Poor: '#ef4444',
   Fair: '#f97316',
   Good: '#22c55e',
-  Excellent: '#10b981',
+  'Very Good': '#06b6d4',
+  Exceptional: '#10b981',
 }
 
 export default function ScoreGauge({ score, minScore, maxScore, category }: ScoreGaugeProps) {
@@ -61,7 +63,7 @@ export default function ScoreGauge({ score, minScore, maxScore, category }: Scor
   const needleStart = pointAtRadius(needleAngle, needleInnerGap)
   const needleTip = pointAtRadius(needleAngle, radius - needleOuterGap)
 
-  const tickCount = 5
+  const tickCount = 6
   const tickLabels: number[] = []
   for (let i = 0; i < tickCount; i++) {
     tickLabels.push(Math.round(minScore + ((maxScore - minScore) / (tickCount - 1)) * i))
@@ -76,9 +78,9 @@ export default function ScoreGauge({ score, minScore, maxScore, category }: Scor
         <defs>
           <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#ef4444" />
-            <stop offset="35%" stopColor="#f97316" />
-            <stop offset="60%" stopColor="#eab308" />
-            <stop offset="80%" stopColor="#22c55e" />
+            <stop offset="25%" stopColor="#f97316" />
+            <stop offset="50%" stopColor="#22c55e" />
+            <stop offset="75%" stopColor="#06b6d4" />
             <stop offset="100%" stopColor="#10b981" />
           </linearGradient>
           <clipPath id="scoreTextClip">

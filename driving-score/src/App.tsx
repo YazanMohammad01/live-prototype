@@ -6,21 +6,16 @@ import { DEMO_PROFILES } from './data/demos'
 
 const DEFAULT_INPUTS: DrivingInputs = {
   hardBrakingPer100Mi: 10,
+  phoneDistractionPerTrip: 4,
   rapidAccelPer100Mi: 8,
-  speedingPercent: 15,
-  phoneDistractionPerTrip: 3,
-  monthlyMiles: 1500,
-  nightDrivingPercent: 20,
-  avgTripDurationMin: 30,
-  yearsExperience: 8,
-  accidentsLast3Yr: 1,
-  violationsLast3Yr: 1,
+  sharpCorneringPer100Mi: 7,
+  speedingPercent: 12,
 }
 
 const DEMO_COLORS: Record<string, { accent: string; bg: string; border: string }> = {
-  'Low Risk':  { accent: 'var(--color-score-good)', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
-  'Average':   { accent: 'var(--color-score-fair)', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.3)' },
-  'High Risk': { accent: 'var(--color-score-poor)', bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.3)' },
+  'Safe Driver':    { accent: 'var(--color-score-good)', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
+  'Average Driver': { accent: 'var(--color-score-fair)', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.3)' },
+  'Risky Driver':   { accent: 'var(--color-score-poor)', bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.3)' },
 }
 
 function App() {
@@ -94,7 +89,7 @@ function App() {
 
         <div className="space-y-6">
           <div className="bg-navy-800 rounded-xl p-6 border border-navy-600">
-            <ScoreGauge score={result.score} minScore={150} maxScore={800} category={result.category} />
+            <ScoreGauge score={result.score} minScore={100} maxScore={850} category={result.category} />
           </div>
 
           <div className="bg-navy-800 rounded-xl p-6 border border-navy-600">

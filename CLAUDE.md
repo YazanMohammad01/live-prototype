@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a monorepo containing two independent FICO score simulation prototypes. They are **separate Vite apps** with no shared code—each has its own `package.json`, `node_modules`, and dev server.
 
-- `driving-score/` — FICO Safe Driving Score (telematics-based, 150–800 scale)
+- `driving-score/` — FICO Safe Driving Score (telematics-based, 100–850 scale)
 - `credit-score/` — FICO Credit Score (traditional credit factors, 300–850 scale)
 
 Both apps have an identical file structure and parallel architecture but different scoring domains, color themes, and input parameters.
@@ -61,9 +61,9 @@ src/
 
 The scoring logic is the core of each app. Key design:
 
-- **Weighted tiers**: Each score is composed of multiple tiers with explicit percentage weights (e.g., driving: Behavior 50%, Trip Context 30%, Profile 20%; credit: Payment History 35%, Amounts Owed 30%, History Length 15%, New Credit 10%, Credit Mix 10% — matching the real FICO five-factor model)
+- **Weighted tiers**: Each score is composed of five factors with explicit percentage weights matching the real FICO models (driving: Braking 30%, Distraction 25%, Acceleration 20%, Cornering 15%, Speeding 10%; credit: Payment History 35%, Amounts Owed 30%, History Length 15%, New Credit 10%, Credit Mix 10%)
 - **Normalize-and-weight pattern**: All inputs are normalized to 0–1 via `normalize()` (with optional invert for "lower is better" inputs), then multiplied by sub-weights within each tier
-- **Score floors**: Both apps have a minimum score (driving: 150, credit: 300) so the worst possible inputs still produce a realistic baseline, not zero
+- **Score floors**: Both apps have a minimum score (driving: 100, credit: 300) so the worst possible inputs still produce a realistic baseline, not zero
 - **`INPUT_BOUNDS` export**: Defines min/max/step/unit for every input field—used by both the scoring engine and `InputPanel` sliders
 - **`generateHints()`**: "What-if" engine that tests multiple improvement targets (25%, 50%, and minimum) for each improvable input, picks the best gain, and returns the top 3. Only includes inputs the user can realistically change (e.g., excludes `totalDebt` from credit hints)
 - **Top factors**: Sub-factors are ranked by deviation from optimal (`(1 - normalizedValue) * weight`), prioritizing negative factors first—shows what's actually hurting the score, not just which weights are biggest

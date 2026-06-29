@@ -93,16 +93,11 @@ function SliderInput({ label, value, min, max, step, unit, onChange }: SliderInp
 }
 
 const INPUT_LABELS: Record<keyof DrivingInputs, string> = {
-  hardBrakingPer100Mi: 'Hard Braking (per 100 mi)',
-  rapidAccelPer100Mi: 'Rapid Acceleration (per 100 mi)',
-  speedingPercent: 'Speeding Frequency',
-  phoneDistractionPerTrip: 'Phone Distraction (per trip)',
-  monthlyMiles: 'Monthly Miles Driven',
-  nightDrivingPercent: 'Night Driving Ratio',
-  avgTripDurationMin: 'Avg Trip Duration',
-  yearsExperience: 'Years of Experience',
-  accidentsLast3Yr: 'Accidents (last 3 years)',
-  violationsLast3Yr: 'Violations (last 3 years)',
+  hardBrakingPer100Mi: 'Harsh Braking Events (per 100 mi)',
+  phoneDistractionPerTrip: 'Phone Usage Events (per trip)',
+  rapidAccelPer100Mi: 'Harsh Acceleration Events (per 100 mi)',
+  sharpCorneringPer100Mi: 'Sharp Cornering Events (per 100 mi)',
+  speedingPercent: 'Time Over Speed Limit',
 }
 
 export default function InputPanel({ inputs, onChange }: InputPanelProps) {
@@ -128,25 +123,26 @@ export default function InputPanel({ inputs, onChange }: InputPanelProps) {
 
   return (
     <div className="bg-navy-800 rounded-xl p-4 border border-navy-600">
-      <h2 className="text-lg font-bold text-text-primary mb-4">Driver Inputs</h2>
+      <h2 className="text-lg font-bold text-text-primary mb-4">Driving Behaviors</h2>
 
-      <TierSection title="Driving Behavior" color="#3b82f6" weight="50%">
+      <TierSection title="Braking" color="#ef4444" weight="30%">
         {renderSlider('hardBrakingPer100Mi')}
-        {renderSlider('rapidAccelPer100Mi')}
-        {renderSlider('speedingPercent')}
+      </TierSection>
+
+      <TierSection title="Distraction" color="#f97316" weight="25%">
         {renderSlider('phoneDistractionPerTrip')}
       </TierSection>
 
-      <TierSection title="Trip Context" color="#8b5cf6" weight="30%">
-        {renderSlider('monthlyMiles')}
-        {renderSlider('nightDrivingPercent')}
-        {renderSlider('avgTripDurationMin')}
+      <TierSection title="Acceleration" color="#3b82f6" weight="20%">
+        {renderSlider('rapidAccelPer100Mi')}
       </TierSection>
 
-      <TierSection title="Driver Profile" color="#10b981" weight="20%">
-        {renderSlider('yearsExperience')}
-        {renderSlider('accidentsLast3Yr')}
-        {renderSlider('violationsLast3Yr')}
+      <TierSection title="Cornering" color="#8b5cf6" weight="15%">
+        {renderSlider('sharpCorneringPer100Mi')}
+      </TierSection>
+
+      <TierSection title="Speeding" color="#10b981" weight="10%">
+        {renderSlider('speedingPercent')}
       </TierSection>
     </div>
   )
